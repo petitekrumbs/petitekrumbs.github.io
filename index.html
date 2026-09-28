@@ -1,4 +1,3 @@
-<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1"><style>:root{color-scheme:light}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -57,13 +56,90 @@
     background: var(--bg);
     color: var(--text);
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    padding: 24px 16px 60px;
   }
-  .wrap {
-    max-width: 960px;
-    margin: 0 auto;
+
+  /* ---------- Login screen ---------- */
+  #login-screen {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
   }
-  h1 {
+  .login-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    box-shadow: var(--shadow);
+    padding: 32px 28px;
+    width: 100%;
+    max-width: 340px;
+    text-align: center;
+  }
+  .login-card h1 {
+    font-size: 20px;
+    margin: 0 0 4px;
+  }
+  .login-card p.sub {
+    color: var(--text-muted);
+    font-size: 13px;
+    margin: 0 0 22px;
+  }
+  .login-card .field {
+    text-align: left;
+    margin-bottom: 14px;
+  }
+  .login-card label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+  }
+  .login-card input {
+    width: 100%;
+    background: var(--input-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 14px;
+    color: var(--text);
+  }
+  .login-card input:focus {
+    outline: 2px solid var(--accent);
+    outline-offset: -1px;
+  }
+  .login-card button {
+    width: 100%;
+    margin-top: 6px;
+    cursor: pointer;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 11px 16px;
+    background: var(--accent);
+    color: #fff;
+    transition: background 0.15s ease;
+  }
+  .login-card button:hover { background: var(--accent-hover); }
+  .login-error {
+    color: var(--danger);
+    font-size: 13px;
+    margin-top: 12px;
+    display: none;
+  }
+
+  /* ---------- App screen ---------- */
+  #app-screen { display: none; padding: 24px 16px 60px; }
+  .wrap { max-width: 960px; margin: 0 auto; }
+  .top-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  h1.app-title {
     font-size: 22px;
     margin: 0 0 4px;
     display: flex;
@@ -75,6 +151,19 @@
     font-size: 14px;
     margin: 0 0 24px;
   }
+  .logout-btn {
+    cursor: pointer;
+    border: 1px solid var(--border);
+    background: var(--card-bg);
+    color: var(--text-muted);
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 8px 12px;
+    white-space: nowrap;
+  }
+  .logout-btn:hover { color: var(--text); }
+
   .card {
     background: var(--card-bg);
     border: 1px solid var(--border);
@@ -121,10 +210,6 @@
     outline: 2px solid var(--accent);
     outline-offset: -1px;
   }
-  input[disabled] {
-    color: var(--text-muted);
-    cursor: default;
-  }
   .mode-pill {
     display: inline-flex;
     align-items: center;
@@ -146,19 +231,10 @@
     padding: 10px 16px;
     transition: background 0.15s ease;
   }
-  .btn-primary {
-    background: var(--accent);
-    color: #fff;
-  }
+  .btn-primary { background: var(--accent); color: #fff; }
   .btn-primary:hover { background: var(--accent-hover); }
-  .btn-primary:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-  .btn-secondary {
-    background: var(--accent-soft);
-    color: var(--accent);
-  }
+  .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+  .btn-secondary { background: var(--accent-soft); color: var(--accent); }
   .btn-secondary:hover { filter: brightness(0.97); }
   .btn-secondary:disabled { opacity: 0.5; cursor: not-allowed; }
   .toolbar {
@@ -169,27 +245,11 @@
     justify-content: space-between;
     margin-bottom: 14px;
   }
-  .toolbar-left {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    flex-wrap: wrap;
-  }
-  .total-badge {
-    font-size: 14px;
-    color: var(--text-muted);
-  }
+  .toolbar-left { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .total-badge { font-size: 14px; color: var(--text-muted); }
   .total-badge b { color: var(--text); }
-  .table-scroll {
-    overflow-x: auto;
-    border-radius: 10px;
-  }
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 14px;
-    min-width: 640px;
-  }
+  .table-scroll { overflow-x: auto; border-radius: 10px; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 640px; }
   th, td {
     text-align: left;
     padding: 10px 12px;
@@ -205,389 +265,374 @@
   }
   tr:last-child td { border-bottom: none; }
   .price-cell { font-weight: 600; }
-  .del-btn {
-    background: transparent;
-    color: var(--danger);
-    padding: 6px 10px;
-    font-size: 13px;
-  }
+  .del-btn { background: transparent; color: var(--danger); padding: 6px 10px; font-size: 13px; }
   .del-btn:hover { background: var(--danger-soft); }
-  .empty-state {
-    text-align: center;
-    color: var(--text-muted);
-    padding: 30px 10px;
-    font-size: 14px;
-  }
-  .status-line {
-    font-size: 12px;
-    color: var(--text-muted);
-    margin-top: 10px;
-  }
-  .csv-fallback {
-    margin-top: 12px;
-  }
-  .csv-fallback textarea {
-    width: 100%;
-    height: 140px;
-    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-    font-size: 12px;
-    resize: vertical;
-  }
-  .error-msg {
-    color: var(--danger);
-    font-size: 13px;
-    margin-top: 8px;
-    display: none;
-  }
+  .empty-state { text-align: center; color: var(--text-muted); padding: 30px 10px; font-size: 14px; }
+  .status-line { font-size: 12px; color: var(--text-muted); margin-top: 10px; }
+  .error-msg { color: var(--danger); font-size: 13px; margin-top: 8px; display: none; }
 </style>
 </head>
 <body>
-<div class="wrap">
-  <h1>🧾 Invoice Payment Tracker</h1>
-  <p class="subtitle">Log each invoice as it's paid — cash only. Export a month's records to CSV whenever you need them.</p>
 
-  <div class="card">
-    <h2>Add a payment</h2>
-    <form id="entry-form">
+<!-- ================= Login screen ================= -->
+<div id="login-screen">
+  <div class="login-card">
+    <h1>🧾 Invoice Tracker</h1>
+    <p class="sub">Sign in to continue</p>
+    <form id="login-form">
       <div class="field">
-        <label for="invoiceNumber">Invoice number</label>
-        <input type="text" id="invoiceNumber" placeholder="e.g. INV-1042" required>
+        <label for="loginUser">User ID</label>
+        <input type="text" id="loginUser" autocomplete="username" required>
       </div>
       <div class="field">
-        <label for="companyName">Company name</label>
-        <input type="text" id="companyName" placeholder="e.g. Acme Pte Ltd" required>
+        <label for="loginPass">Password</label>
+        <input type="password" id="loginPass" autocomplete="current-password" required>
       </div>
-      <div class="field">
-        <label for="price">Price</label>
-        <input type="number" id="price" placeholder="0.00" min="0" step="0.01" required>
-      </div>
-      <div class="field">
-        <label for="invoiceDate">Invoice date</label>
-        <input type="date" id="invoiceDate" required>
-      </div>
-      <div class="field">
-        <label for="paymentDate">Date of payment</label>
-        <input type="date" id="paymentDate" required>
-      </div>
-      <div class="field">
-        <label>Mode of payment</label>
-        <span class="mode-pill">💵 Cash</span>
-      </div>
-      <div class="field">
-        <button type="submit" class="btn-primary" id="add-btn">Add entry</button>
-      </div>
+      <button type="submit">Log in</button>
+      <div class="login-error" id="login-error">Incorrect user ID or password.</div>
     </form>
-    <div class="error-msg" id="error-msg"></div>
-    <div class="status-line" id="status-line"></div>
   </div>
+</div>
 
-  <div class="card">
-    <h2>Records</h2>
-    <div class="toolbar">
-      <div class="toolbar-left">
-        <select id="month-filter"></select>
-        <span class="total-badge">Total: <b id="month-total">$0.00</b></span>
+<!-- ================= App screen ================= -->
+<div id="app-screen">
+  <div class="wrap">
+    <div class="top-row">
+      <div>
+        <h1 class="app-title">🧾 Invoice Payment Tracker</h1>
+        <p class="subtitle">Log each invoice as it's paid — cash only. Export a month's records to CSV whenever you need them.</p>
       </div>
-      <button class="btn-secondary" id="export-btn">Export CSV</button>
+      <button class="logout-btn" id="logout-btn">Log out</button>
     </div>
-    <div class="table-scroll">
-      <table id="table" style="display:none;">
-        <thead>
-          <tr>
-            <th>Invoice #</th>
-            <th>Company</th>
-            <th>Price</th>
-            <th>Invoice date</th>
-            <th>Payment date</th>
-            <th>Mode</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody id="table-body"></tbody>
-      </table>
-      <div class="empty-state" id="empty-state">No entries yet for this month. Add one above.</div>
+
+    <div class="card">
+      <h2>Add a payment</h2>
+      <form id="entry-form">
+        <div class="field">
+          <label for="invoiceNumber">Invoice number</label>
+          <input type="text" id="invoiceNumber" placeholder="e.g. INV-1042" required>
+        </div>
+        <div class="field">
+          <label for="companyName">Company name</label>
+          <input type="text" id="companyName" placeholder="e.g. Acme Pte Ltd" required>
+        </div>
+        <div class="field">
+          <label for="price">Price</label>
+          <input type="number" id="price" placeholder="0.00" min="0" step="0.01" required>
+        </div>
+        <div class="field">
+          <label for="invoiceDate">Invoice date</label>
+          <input type="date" id="invoiceDate" required>
+        </div>
+        <div class="field">
+          <label for="paymentDate">Date of payment</label>
+          <input type="date" id="paymentDate" required>
+        </div>
+        <div class="field">
+          <label>Mode of payment</label>
+          <span class="mode-pill">💵 Cash</span>
+        </div>
+        <div class="field">
+          <button type="submit" class="btn-primary" id="add-btn">Add entry</button>
+        </div>
+      </form>
+      <div class="error-msg" id="error-msg"></div>
     </div>
-    <div class="csv-fallback" id="csv-fallback" style="display:none;">
-      <label style="font-size:13px; color:var(--text-muted);">Downloads aren't available in this view — copy the CSV below:</label>
-      <textarea id="csv-text" readonly></textarea>
+
+    <div class="card">
+      <h2>Records</h2>
+      <div class="toolbar">
+        <div class="toolbar-left">
+          <select id="month-filter"></select>
+          <span class="total-badge">Total: <b id="month-total">$0.00</b></span>
+        </div>
+        <button class="btn-secondary" id="export-btn">Export CSV</button>
+      </div>
+      <div class="table-scroll">
+        <table id="table" style="display:none;">
+          <thead>
+            <tr>
+              <th>Invoice #</th>
+              <th>Company</th>
+              <th>Price</th>
+              <th>Invoice date</th>
+              <th>Payment date</th>
+              <th>Mode</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="table-body"></tbody>
+        </table>
+        <div class="empty-state" id="empty-state">No entries yet for this month. Add one above.</div>
+      </div>
+      <p class="status-line">Data is stored in this browser only (localStorage) — it won't sync across devices, and clearing browser data will erase it. Export to CSV regularly to keep a permanent record.</p>
     </div>
   </div>
 </div>
 
 <script>
 (function () {
-  const LOCAL_KEY = "invoice_tracker_entries_v1";
-  let entries = []; // {id, invoiceNumber, companyName, price, invoiceDate, paymentDate, mode, createdAt}
-  let db = null;
-  let downloads = null;
-  let usingLocalFallback = false;
-  let unsubscribe = null;
+  // ---------------- Auth ----------------
+  // NOTE: this is a plain static site (GitHub Pages) with no backend, so this
+  // login is a simple access gate, not real security — anyone who views the
+  // page source can read the credentials below.
+  const VALID_USER = "admin";
+  const VALID_PASS = "eggsfloursugar";
+  const SESSION_KEY = "invoice_tracker_logged_in";
 
-  const form = document.getElementById("entry-form");
-  const addBtn = document.getElementById("add-btn");
-  const errorMsg = document.getElementById("error-msg");
-  const statusLine = document.getElementById("status-line");
-  const monthFilter = document.getElementById("month-filter");
-  const monthTotal = document.getElementById("month-total");
-  const table = document.getElementById("table");
-  const tableBody = document.getElementById("table-body");
-  const emptyState = document.getElementById("empty-state");
-  const exportBtn = document.getElementById("export-btn");
-  const csvFallback = document.getElementById("csv-fallback");
-  const csvText = document.getElementById("csv-text");
+  const loginScreen = document.getElementById("login-screen");
+  const appScreen = document.getElementById("app-screen");
+  const loginForm = document.getElementById("login-form");
+  const loginError = document.getElementById("login-error");
+  const logoutBtn = document.getElementById("logout-btn");
 
-  document.getElementById("invoiceDate").valueAsDate = new Date();
-  document.getElementById("paymentDate").valueAsDate = new Date();
-
-  function showError(msg) {
-    errorMsg.textContent = msg;
-    errorMsg.style.display = msg ? "block" : "none";
+  function showApp() {
+    loginScreen.style.display = "none";
+    appScreen.style.display = "block";
+    initApp();
   }
 
-  function fmtMoney(n) {
-    const num = Number(n) || 0;
-    return "$" + num.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  function showLogin() {
+    appScreen.style.display = "none";
+    loginScreen.style.display = "flex";
   }
 
-  function monthKey(dateStr) {
-    return (dateStr || "").slice(0, 7); // "YYYY-MM"
-  }
-
-  function monthLabel(key) {
-    if (!key) return "Unknown";
-    const [y, m] = key.split("-").map(Number);
-    const d = new Date(y, (m || 1) - 1, 1);
-    return d.toLocaleString(undefined, { month: "long", year: "numeric" });
-  }
-
-  function currentMonthKey() {
-    const d = new Date();
-    return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0");
-  }
-
-  function csvEscape(val) {
-    const s = String(val ?? "");
-    if (/[",\n]/.test(s)) {
-      return '"' + s.replace(/"/g, '""') + '"';
-    }
-    return s;
-  }
-
-  function renderMonthOptions() {
-    // Filter by payment date, since that's what defines "this month's" collection.
-    const keys = new Set(entries.map(e => monthKey(e.paymentDate)));
-    keys.add(currentMonthKey());
-    const sorted = Array.from(keys).filter(Boolean).sort().reverse();
-    const prevValue = monthFilter.value || currentMonthKey();
-    monthFilter.innerHTML = "";
-    sorted.forEach(key => {
-      const opt = document.createElement("option");
-      opt.value = key;
-      opt.textContent = monthLabel(key);
-      monthFilter.appendChild(opt);
-    });
-    if (sorted.includes(prevValue)) {
-      monthFilter.value = prevValue;
-    } else if (sorted.length) {
-      monthFilter.value = sorted[0];
-    }
-  }
-
-  function render() {
-    renderMonthOptions();
-    const selectedKey = monthFilter.value || currentMonthKey();
-    const filtered = entries
-      .filter(e => monthKey(e.paymentDate) === selectedKey)
-      .sort((a, b) => (a.paymentDate < b.paymentDate ? 1 : -1));
-
-    tableBody.innerHTML = "";
-    let total = 0;
-    filtered.forEach(e => {
-      total += Number(e.price) || 0;
-      const tr = document.createElement("tr");
-      tr.innerHTML = `
-        <td>${escapeHtml(e.invoiceNumber)}</td>
-        <td>${escapeHtml(e.companyName)}</td>
-        <td class="price-cell">${fmtMoney(e.price)}</td>
-        <td>${escapeHtml(e.invoiceDate)}</td>
-        <td>${escapeHtml(e.paymentDate)}</td>
-        <td>💵 Cash</td>
-        <td><button class="del-btn" data-id="${e.id}">Delete</button></td>
-      `;
-      tableBody.appendChild(tr);
-    });
-
-    monthTotal.textContent = fmtMoney(total);
-
-    if (filtered.length === 0) {
-      table.style.display = "none";
-      emptyState.style.display = "block";
-    } else {
-      table.style.display = "table";
-      emptyState.style.display = "none";
-    }
-  }
-
-  function escapeHtml(s) {
-    return String(s ?? "").replace(/[&<>"']/g, c => ({
-      "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
-    }[c]));
-  }
-
-  tableBody.addEventListener("click", (ev) => {
-    const btn = ev.target.closest(".del-btn");
-    if (!btn) return;
-    const id = btn.getAttribute("data-id");
-    deleteEntry(id);
-  });
-
-  monthFilter.addEventListener("change", render);
-
-  form.addEventListener("submit", async (ev) => {
+  loginForm.addEventListener("submit", (ev) => {
     ev.preventDefault();
-    showError("");
-    const invoiceNumber = document.getElementById("invoiceNumber").value.trim();
-    const companyName = document.getElementById("companyName").value.trim();
-    const price = parseFloat(document.getElementById("price").value);
-    const invoiceDate = document.getElementById("invoiceDate").value;
-    const paymentDate = document.getElementById("paymentDate").value;
-
-    if (!invoiceNumber || !companyName || !invoiceDate || !paymentDate || isNaN(price) || price < 0) {
-      showError("Please fill in every field with a valid value.");
-      return;
-    }
-
-    addBtn.disabled = true;
-    try {
-      await addEntry({ invoiceNumber, companyName, price, invoiceDate, paymentDate, mode: "Cash" });
-      form.reset();
-      document.getElementById("invoiceDate").valueAsDate = new Date();
-      document.getElementById("paymentDate").valueAsDate = new Date();
-    } catch (e) {
-      showError("Couldn't save that entry. Please try again.");
-    } finally {
-      addBtn.disabled = false;
+    const user = document.getElementById("loginUser").value.trim();
+    const pass = document.getElementById("loginPass").value;
+    if (user === VALID_USER && pass === VALID_PASS) {
+      loginError.style.display = "none";
+      try { sessionStorage.setItem(SESSION_KEY, "1"); } catch (e) {}
+      showApp();
+    } else {
+      loginError.style.display = "block";
     }
   });
 
-  exportBtn.addEventListener("click", async () => {
-    const selectedKey = monthFilter.value || currentMonthKey();
-    const filtered = entries
-      .filter(e => monthKey(e.paymentDate) === selectedKey)
-      .sort((a, b) => (a.paymentDate < b.paymentDate ? -1 : 1));
+  logoutBtn.addEventListener("click", () => {
+    try { sessionStorage.removeItem(SESSION_KEY); } catch (e) {}
+    loginForm.reset();
+    showLogin();
+  });
 
-    const header = ["Invoice Number", "Company Name", "Price", "Invoice Date", "Date of Payment", "Mode of Payment"];
-    const rows = filtered.map(e => [
-      csvEscape(e.invoiceNumber),
-      csvEscape(e.companyName),
-      csvEscape((Number(e.price) || 0).toFixed(2)),
-      csvEscape(e.invoiceDate),
-      csvEscape(e.paymentDate),
-      csvEscape(e.mode || "Cash"),
-    ].join(","));
-    const csv = [header.join(","), ...rows].join("\n");
-    const filename = `invoices-${selectedKey}.csv`;
+  let loggedIn = false;
+  try { loggedIn = sessionStorage.getItem(SESSION_KEY) === "1"; } catch (e) {}
+  if (loggedIn) {
+    showApp();
+  }
 
-    if (downloads) {
-      try {
-        await downloads.save({ filename, data: csv });
-        csvFallback.style.display = "none";
-        return;
-      } catch (e) {
-        // fall through to manual copy
+  // ---------------- App (runs once, on first successful login) ----------------
+  let appInitialized = false;
+
+  function initApp() {
+    if (appInitialized) return;
+    appInitialized = true;
+
+    const LOCAL_KEY = "invoice_tracker_entries_v1";
+    let entries = []; // {id, invoiceNumber, companyName, price, invoiceDate, paymentDate, mode, createdAt}
+
+    const form = document.getElementById("entry-form");
+    const addBtn = document.getElementById("add-btn");
+    const errorMsg = document.getElementById("error-msg");
+    const monthFilter = document.getElementById("month-filter");
+    const monthTotal = document.getElementById("month-total");
+    const table = document.getElementById("table");
+    const tableBody = document.getElementById("table-body");
+    const emptyState = document.getElementById("empty-state");
+    const exportBtn = document.getElementById("export-btn");
+
+    document.getElementById("invoiceDate").valueAsDate = new Date();
+    document.getElementById("paymentDate").valueAsDate = new Date();
+
+    function showError(msg) {
+      errorMsg.textContent = msg;
+      errorMsg.style.display = msg ? "block" : "none";
+    }
+
+    function fmtMoney(n) {
+      const num = Number(n) || 0;
+      return "$" + num.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    function monthKey(dateStr) {
+      return (dateStr || "").slice(0, 7); // "YYYY-MM"
+    }
+
+    function monthLabel(key) {
+      if (!key) return "Unknown";
+      const [y, m] = key.split("-").map(Number);
+      const d = new Date(y, (m || 1) - 1, 1);
+      return d.toLocaleString(undefined, { month: "long", year: "numeric" });
+    }
+
+    function currentMonthKey() {
+      const d = new Date();
+      return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0");
+    }
+
+    function csvEscape(val) {
+      const s = String(val ?? "");
+      if (/[",\n]/.test(s)) {
+        return '"' + s.replace(/"/g, '""') + '"';
+      }
+      return s;
+    }
+
+    function renderMonthOptions() {
+      const keys = new Set(entries.map(e => monthKey(e.paymentDate)));
+      keys.add(currentMonthKey());
+      const sorted = Array.from(keys).filter(Boolean).sort().reverse();
+      const prevValue = monthFilter.value || currentMonthKey();
+      monthFilter.innerHTML = "";
+      sorted.forEach(key => {
+        const opt = document.createElement("option");
+        opt.value = key;
+        opt.textContent = monthLabel(key);
+        monthFilter.appendChild(opt);
+      });
+      if (sorted.includes(prevValue)) {
+        monthFilter.value = prevValue;
+      } else if (sorted.length) {
+        monthFilter.value = sorted[0];
       }
     }
-    csvText.value = csv;
-    csvFallback.style.display = "block";
-  });
 
-  // ---- storage: db capability with localStorage fallback ----
-
-  function loadLocal() {
-    try {
-      const raw = localStorage.getItem(LOCAL_KEY);
-      entries = raw ? JSON.parse(raw) : [];
-    } catch (e) {
-      entries = [];
+    function escapeHtml(s) {
+      return String(s ?? "").replace(/[&<>"']/g, c => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+      }[c]));
     }
-  }
 
-  function saveLocal() {
-    try {
-      localStorage.setItem(LOCAL_KEY, JSON.stringify(entries));
-    } catch (e) {
-      // ignore
+    function render() {
+      renderMonthOptions();
+      const selectedKey = monthFilter.value || currentMonthKey();
+      const filtered = entries
+        .filter(e => monthKey(e.paymentDate) === selectedKey)
+        .sort((a, b) => (a.paymentDate < b.paymentDate ? 1 : -1));
+
+      tableBody.innerHTML = "";
+      let total = 0;
+      filtered.forEach(e => {
+        total += Number(e.price) || 0;
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${escapeHtml(e.invoiceNumber)}</td>
+          <td>${escapeHtml(e.companyName)}</td>
+          <td class="price-cell">${fmtMoney(e.price)}</td>
+          <td>${escapeHtml(e.invoiceDate)}</td>
+          <td>${escapeHtml(e.paymentDate)}</td>
+          <td>💵 Cash</td>
+          <td><button class="del-btn" data-id="${e.id}">Delete</button></td>
+        `;
+        tableBody.appendChild(tr);
+      });
+
+      monthTotal.textContent = fmtMoney(total);
+
+      if (filtered.length === 0) {
+        table.style.display = "none";
+        emptyState.style.display = "block";
+      } else {
+        table.style.display = "table";
+        emptyState.style.display = "none";
+      }
     }
-  }
 
-  async function addEntry(data) {
-    if (db && !usingLocalFallback) {
-      await db.collection("invoices").add({ ...data, createdAt: Date.now() });
-    } else {
-      entries.push({ id: "local-" + Date.now() + "-" + Math.random().toString(36).slice(2), ...data, createdAt: Date.now() });
+    function loadLocal() {
+      try {
+        const raw = localStorage.getItem(LOCAL_KEY);
+        entries = raw ? JSON.parse(raw) : [];
+      } catch (e) {
+        entries = [];
+      }
+    }
+
+    function saveLocal() {
+      try {
+        localStorage.setItem(LOCAL_KEY, JSON.stringify(entries));
+      } catch (e) {
+        showError("Couldn't save — your browser's local storage may be full or disabled.");
+      }
+    }
+
+    function addEntry(data) {
+      entries.push({
+        id: "e" + Date.now() + Math.random().toString(36).slice(2),
+        ...data,
+        createdAt: Date.now()
+      });
       saveLocal();
       render();
     }
-  }
 
-  async function deleteEntry(id) {
-    if (db && !usingLocalFallback) {
-      try {
-        await db.collection("invoices").doc(id).delete();
-      } catch (e) {
-        showError("Couldn't delete that entry.");
-      }
-    } else {
+    function deleteEntry(id) {
       entries = entries.filter(e => e.id !== id);
       saveLocal();
       render();
     }
-  }
 
-  async function init() {
-    try {
-      db = await window.claude?.use ? await window.claude.use("db") : null;
-    } catch (e) {
-      db = null;
-    }
-    try {
-      downloads = window.claude?.use ? await window.claude.use("downloads") : null;
-    } catch (e) {
-      downloads = null;
-    }
+    tableBody.addEventListener("click", (ev) => {
+      const btn = ev.target.closest(".del-btn");
+      if (!btn) return;
+      deleteEntry(btn.getAttribute("data-id"));
+    });
 
-    if (db) {
-      statusLine.textContent = "";
-      unsubscribe = db.collection("invoices").onSnapshot(
-        (snap) => {
-          entries = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-          render();
-        },
-        (err) => {
-          usingLocalFallback = true;
-          loadLocal();
-          render();
-          statusLine.textContent = "Saving to this browser only.";
-        }
-      );
-    } else {
-      usingLocalFallback = true;
-      loadLocal();
-      render();
-      statusLine.textContent = "Saving to this browser only.";
-    }
+    monthFilter.addEventListener("change", render);
 
-    if (!downloads) {
-      // Export still works via the on-page copy fallback.
-    }
+    form.addEventListener("submit", (ev) => {
+      ev.preventDefault();
+      showError("");
+      const invoiceNumber = document.getElementById("invoiceNumber").value.trim();
+      const companyName = document.getElementById("companyName").value.trim();
+      const price = parseFloat(document.getElementById("price").value);
+      const invoiceDate = document.getElementById("invoiceDate").value;
+      const paymentDate = document.getElementById("paymentDate").value;
 
+      if (!invoiceNumber || !companyName || !invoiceDate || !paymentDate || isNaN(price) || price < 0) {
+        showError("Please fill in every field with a valid value.");
+        return;
+      }
+
+      addEntry({ invoiceNumber, companyName, price, invoiceDate, paymentDate, mode: "Cash" });
+      form.reset();
+      document.getElementById("invoiceDate").valueAsDate = new Date();
+      document.getElementById("paymentDate").valueAsDate = new Date();
+    });
+
+    exportBtn.addEventListener("click", () => {
+      const selectedKey = monthFilter.value || currentMonthKey();
+      const filtered = entries
+        .filter(e => monthKey(e.paymentDate) === selectedKey)
+        .sort((a, b) => (a.paymentDate < b.paymentDate ? -1 : 1));
+
+      const header = ["Invoice Number", "Company Name", "Price", "Invoice Date", "Date of Payment", "Mode of Payment"];
+      const rows = filtered.map(e => [
+        csvEscape(e.invoiceNumber),
+        csvEscape(e.companyName),
+        csvEscape((Number(e.price) || 0).toFixed(2)),
+        csvEscape(e.invoiceDate),
+        csvEscape(e.paymentDate),
+        csvEscape(e.mode || "Cash"),
+      ].join(","));
+      const csv = [header.join(","), ...rows].join("\n");
+      const filename = `invoices-${selectedKey}.csv`;
+
+      const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    });
+
+    loadLocal();
     render();
   }
-
-  init();
 })();
 </script>
 </body>
 </html>
-
-</body></html>
