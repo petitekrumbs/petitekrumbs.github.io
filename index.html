@@ -191,11 +191,27 @@
     gap: 6px;
     min-width: 0;
   }
+  .field-label-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
   label {
     font-size: 13px;
     font-weight: 600;
     color: var(--text-muted);
   }
+  .link-btn {
+    background: none;
+    border: none;
+    color: var(--accent);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 0;
+  }
+  .link-btn:hover { color: var(--accent-hover); text-decoration: underline; }
   input, select {
     background: var(--input-bg);
     border: 1px solid var(--border);
@@ -270,6 +286,51 @@
   .empty-state { text-align: center; color: var(--text-muted); padding: 30px 10px; font-size: 14px; }
   .status-line { font-size: 12px; color: var(--text-muted); margin-top: 10px; }
   .error-msg { color: var(--danger); font-size: 13px; margin-top: 8px; display: none; }
+  .manage-panel {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+    display: none;
+  }
+  .manage-panel-header {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 10px;
+  }
+  .chip-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--accent-soft);
+    color: var(--accent);
+    border-radius: 999px;
+    padding: 6px 12px;
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .chip button {
+    background: transparent;
+    border: none;
+    color: var(--accent);
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 700;
+    padding: 0;
+    line-height: 1;
+  }
+  .chip button:hover { color: var(--danger); }
+  .add-company-row { display: flex; gap: 8px; }
+  .add-company-row input { flex: 1; }
+  .no-companies-note { color: var(--text-muted); font-size: 13px; }
 </style>
 </head>
 <body>
@@ -313,8 +374,14 @@
           <input type="text" id="invoiceNumber" placeholder="e.g. INV-1042" required>
         </div>
         <div class="field">
-          <label for="companyName">Company name</label>
-          <input type="text" id="companyName" placeholder="e.g. Acme Pte Ltd" required>
+          <div class="field-label-row">
+            <label for="companySelect">Company name</label>
+            <button type="button" class="link-btn" id="manage-companies-btn">Manage list</button>
+          </div>
+          <select id="companySelect" required>
+            <option value="" disabled selected>Select a company…</option>
+            <option value="__add__">➕ Add new company…</option>
+          </select>
         </div>
         <div class="field">
           <label for="price">Price</label>
@@ -336,6 +403,14 @@
           <button type="submit" class="btn-primary" id="add-btn">Add entry</button>
         </div>
       </form>
+      <div class="manage-panel" id="manage-companies-panel">
+        <div class="manage-panel-header">Companies</div>
+        <div class="chip-list" id="company-list"></div>
+        <div class="add-company-row">
+          <input type="text" id="newCompanyInput" placeholder="Add a company…">
+          <button type="button" class="btn-secondary" id="addCompanyBtn">Add</button>
+        </div>
+      </div>
       <div class="error-msg" id="error-msg"></div>
     </div>
 
@@ -430,7 +505,9 @@
     appInitialized = true;
 
     const LOCAL_KEY = "invoice_tracker_entries_v1";
+    const COMPANIES_KEY = "invoice_tracker_companies_v1";
     let entries = []; // {id, invoiceNumber, companyName, price, invoiceDate, paymentDate, mode, createdAt}
+    let companies = [];
 
     const form = document.getElementById("entry-form");
     const addBtn = document.getElementById("add-btn");
@@ -441,6 +518,12 @@
     const tableBody = document.getElementById("table-body");
     const emptyState = document.getElementById("empty-state");
     const exportBtn = document.getElementById("export-btn");
+    const companySelect = document.getElementById("companySelect");
+    const managePanel = document.getElementById("manage-companies-panel");
+    const manageBtn = document.getElementById("manage-companies-btn");
+    const companyListEl = document.getElementById("company-list");
+    const newCompanyInput = document.getElementById("newCompanyInput");
+    const addCompanyBtn = document.getElementById("addCompanyBtn");
 
     document.getElementById("invoiceDate").valueAsDate = new Date();
     document.getElementById("paymentDate").valueAsDate = new Date();
@@ -479,6 +562,12 @@
       return s;
     }
 
+    function escapeHtml(s) {
+      return String(s ?? "").replace(/[&<>"']/g, c => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+      }[c]));
+    }
+
     function renderMonthOptions() {
       const keys = new Set(entries.map(e => monthKey(e.paymentDate)));
       keys.add(currentMonthKey());
@@ -496,12 +585,6 @@
       } else if (sorted.length) {
         monthFilter.value = sorted[0];
       }
-    }
-
-    function escapeHtml(s) {
-      return String(s ?? "").replace(/[&<>"']/g, c => ({
-        "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
-      }[c]));
     }
 
     function render() {
@@ -580,22 +663,138 @@
 
     monthFilter.addEventListener("change", render);
 
+    // ---- companies: dropdown + manage panel ----
+
+    function loadCompanies() {
+      try {
+        const raw = localStorage.getItem(COMPANIES_KEY);
+        companies = raw ? JSON.parse(raw) : [];
+      } catch (e) {
+        companies = [];
+      }
+    }
+
+    function saveCompanies() {
+      try {
+        localStorage.setItem(COMPANIES_KEY, JSON.stringify(companies));
+      } catch (e) {
+        // ignore
+      }
+    }
+
+    function renderCompanyOptions() {
+      const prev = companySelect.value;
+      companySelect.innerHTML = "";
+      const placeholder = document.createElement("option");
+      placeholder.value = "";
+      placeholder.disabled = true;
+      placeholder.textContent = companies.length ? "Select a company…" : "No companies yet — add one";
+      companySelect.appendChild(placeholder);
+      companies.slice().sort((a, b) => a.localeCompare(b)).forEach(name => {
+        const opt = document.createElement("option");
+        opt.value = name;
+        opt.textContent = name;
+        companySelect.appendChild(opt);
+      });
+      const addOpt = document.createElement("option");
+      addOpt.value = "__add__";
+      addOpt.textContent = "➕ Add new company…";
+      companySelect.appendChild(addOpt);
+      companySelect.value = companies.includes(prev) ? prev : "";
+    }
+
+    function renderCompanyManageList() {
+      companyListEl.innerHTML = "";
+      if (!companies.length) {
+        companyListEl.innerHTML = '<span class="no-companies-note">No companies added yet.</span>';
+        return;
+      }
+      companies.slice().sort((a, b) => a.localeCompare(b)).forEach(name => {
+        const chip = document.createElement("span");
+        chip.className = "chip";
+        chip.innerHTML = `${escapeHtml(name)} <button type="button" data-company="${escapeHtml(name)}" title="Remove ${escapeHtml(name)}">×</button>`;
+        companyListEl.appendChild(chip);
+      });
+    }
+
+    function addCompany(name) {
+      name = (name || "").trim();
+      if (!name) return false;
+      if (companies.some(c => c.toLowerCase() === name.toLowerCase())) return false;
+      companies.push(name);
+      saveCompanies();
+      renderCompanyOptions();
+      renderCompanyManageList();
+      return true;
+    }
+
+    function removeCompany(name) {
+      companies = companies.filter(c => c !== name);
+      saveCompanies();
+      renderCompanyOptions();
+      renderCompanyManageList();
+    }
+
+    companySelect.addEventListener("change", () => {
+      if (companySelect.value === "__add__") {
+        const name = window.prompt("New company name:");
+        if (name && name.trim()) {
+          addCompany(name.trim());
+          companySelect.value = name.trim();
+        } else {
+          companySelect.value = "";
+        }
+      }
+    });
+
+    manageBtn.addEventListener("click", () => {
+      const showing = managePanel.style.display === "block";
+      managePanel.style.display = showing ? "none" : "block";
+      if (!showing) newCompanyInput.focus();
+    });
+
+    addCompanyBtn.addEventListener("click", () => {
+      if (addCompany(newCompanyInput.value)) {
+        newCompanyInput.value = "";
+        newCompanyInput.focus();
+      }
+    });
+
+    newCompanyInput.addEventListener("keydown", (ev) => {
+      if (ev.key === "Enter") {
+        ev.preventDefault();
+        addCompanyBtn.click();
+      }
+    });
+
+    companyListEl.addEventListener("click", (ev) => {
+      const btn = ev.target.closest("button[data-company]");
+      if (!btn) return;
+      const name = btn.getAttribute("data-company");
+      if (window.confirm(`Remove "${name}" from the company list? This won't change any past entries.`)) {
+        removeCompany(name);
+      }
+    });
+
+    // ---- entry form ----
+
     form.addEventListener("submit", (ev) => {
       ev.preventDefault();
       showError("");
       const invoiceNumber = document.getElementById("invoiceNumber").value.trim();
-      const companyName = document.getElementById("companyName").value.trim();
+      const companyName = companySelect.value;
       const price = parseFloat(document.getElementById("price").value);
       const invoiceDate = document.getElementById("invoiceDate").value;
       const paymentDate = document.getElementById("paymentDate").value;
 
-      if (!invoiceNumber || !companyName || !invoiceDate || !paymentDate || isNaN(price) || price < 0) {
-        showError("Please fill in every field with a valid value.");
+      if (!invoiceNumber || !companyName || companyName === "__add__" || !invoiceDate || !paymentDate || isNaN(price) || price < 0) {
+        showError("Please fill in every field with a valid value, and pick a company.");
         return;
       }
 
       addEntry({ invoiceNumber, companyName, price, invoiceDate, paymentDate, mode: "Cash" });
       form.reset();
+      companySelect.value = "";
       document.getElementById("invoiceDate").valueAsDate = new Date();
       document.getElementById("paymentDate").valueAsDate = new Date();
     });
@@ -630,6 +829,9 @@
     });
 
     loadLocal();
+    loadCompanies();
+    renderCompanyOptions();
+    renderCompanyManageList();
     render();
   }
 })();
